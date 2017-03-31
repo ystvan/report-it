@@ -1,4 +1,23 @@
 {
+  "name": "abusereportbot",
+  "version": "1.0.0",
+  "description": "AUHack project",
+  "main": "hello.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ystvan/report-it.git"
+  },
+  "keywords": [
+    "Bots, LUIS, Cognitive Services, Azure, API, GitHub"
+  ],
+  "author": "Istvan Marki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ystvan/report-it/issues"
+  },
   "dependencies": {
     "botbuilder": "^3.7.0",
     "restify": "^4.3.0"

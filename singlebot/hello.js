@@ -16,8 +16,20 @@ var connector = new builder.ChatConnector();
 
 var bot = new builder.UniversalBot(connector);
 
+//using intents for now, later LUIS
+var intents = new builder.IntentDialog();
+bot.dialog('/', intents);
 
-bot.dialog('/', [
+intents.matches(/^change name/i, [
+    function (session) {
+        session.beginDialog('/profile');
+    },
+    function (session, results) {
+        session.send('Got it... Changed your name to %s', session.userData.name);
+    }
+]);
+
+intents.onDefault([
     function(session, args, next) {
        //checking the memory if got username yet
        if (!session.userData.name){
