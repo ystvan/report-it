@@ -51,7 +51,7 @@ function confirmTitle(session, args, next) {
     if (films) {
         next({ response: films.entity });
     } else {
-        builder.Prompts.text(session, 'Which episode\'s title are you looking for?');
+        builder.Prompts.text(session, 'Ok, it seems you\'re looking for the title of an episode? Which episode\'s title are you looking for?');
     }
 }
 
@@ -74,14 +74,36 @@ function getTitle(session, results, next) {
 //Helper methods from the API requests
 
 function loadTitle(films, callback){
-    loadData('/films/', callback);
+    loadTitle('/films/', + querystring.escape(films), callback);
 }
 
-function loadData(path, callback) {
+function loadTitle(path, callback) {
     var options = {
-        host: 'http://swapi.co/api'
-        //create request to swapi
-    }
+        host: 'http://swapi.co/api',
+        port: 443,
+        path: path,
+        method: 'GET'
+    };
+        var title;
+        var request = https.request(options, function (error, response, body){
+            if(!error && response.statusCode == 200)
+                parseTitleResponse(session, body)     
+            else
+            session.endDialog("Sorry, I wasn't able to find an episode with your query");
+
+        request.end();
+    });
+}
+       
+   
+    
+    
+
+
+var parseTitleResponse = function (mySession, myResponse) {
+    var obj = JSON.parse(myResponse);
+    var formattedString = ('The title of the movie is ' + obj.title);
+    mySession.endDialog();
 }
 
 
