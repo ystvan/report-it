@@ -40,7 +40,7 @@ module.exports = dialog
 
 //default Prompt in case of non applicable query
 function sendInstructions(session, results, next) {
-    builder.Prompts.choice(session, 'What information are you looking for?', options);
+    builder.Prompts.choice(session, 'Ask me about STAR WARS movies!', options);
     next();
 }
 
@@ -64,36 +64,58 @@ function getTitle(session, results, next) {
     if (films.entity) films = session.dialogData.films = films.entity;
     else session.dialogData.user = films;
 
-    if (!films) 
+    if (!films) {
         session.endDialog('Request cancelled.');
-    else 
-        loadTitle();
-       
-};
+    } else {
+        loadTitle(films, (title) => {
+            if (title) {
+                var message = new builder.Message(session).text('The title of the movie is ' + title.title);
+                session.send(message);
+            } else {
+                session.endDialog('Sorrrrrrrrrrrrrrrrrry');
+            }
+        });
+    }
+}
 
 
 
 //Helper methods from the API requests
 
 function loadTitle(films, callback){
-    loadTitle('/films/', + querystring.escape(films), callback);
+    loadData('/api/films/', + querystring.escape(films), callback);
 }
 
-function loadTitle(path, callback) {
+function loadData(path, callback) {
     var options = {
-        host: 'http://swapi.co/api',
+        host: 'swapi.co',
         path: path,
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'User-Agent': 'sample-bot'
+        }
     };
-        var title;
-        var request = https.request(options, function (error, response, body){
-            if(!error && response.statusCode == 200)
-                parseTitleResponse(session, body)     
-            else
-            session.endDialog("Sorry, I wasn't able to find an episode with your query");
-
-        request.end();
+    var title;
+    var request = https.request(options, function (response) {
+        var data = '';
+        response.on('data', function (chunk) { data += chunk; });
+        response.on('end', function () {
+            //json cleanup
+            data = data.replace(/\\n/g, "\\n")  
+               .replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\\&/g, "\\&")
+               .replace(/\\r/g, "\\r")
+               .replace(/\\t/g, "\\t")
+               .replace(/\\b/g, "\\b")
+               .replace(/\\f/g, "\\f");
+            // remove non-printable and other non-valid JSON chars
+            data = data.replace(/[\u0000-\u0019]+/g,""); 
+             
+            callback(JSON.parse(data));
+        });
     });
+    request.end();
 }
        
    
@@ -101,11 +123,13 @@ function loadTitle(path, callback) {
     
 //JSON object refining
 
-var parseTitleResponse = function (mySession, myResponse) {
-    var obj = JSON.parse(myResponse);
-    var formattedString = ('The title of the movie is ' + obj.title);
-    mySession.endDialog();
-}
+// var parseTitleResponse = function (mySession, myResponse) {
+//     var data = '';
+//     response.on('data')
+//     var obj = JSON.parse(myResponse);
+//     var formattedString = ('The title of the movie is ' + obj.title);
+//     mySession.endDialog();
+// }
 
 //creating cards for fancy responses
 /*
