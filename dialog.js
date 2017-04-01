@@ -83,7 +83,7 @@ function getTitle(session, results, next) {
 //Helper methods from the API requests
 
 function loadTitle(films, callback){
-    loadData('/api/films/', + querystring.escape(films), callback);
+    loadData('/api/films/' + querystring.escape(films), callback);
 }
 
 function loadData(path, callback) {
@@ -99,20 +99,20 @@ function loadData(path, callback) {
     var request = https.request(options, function (response) {
         var data = '';
         response.on('data', function (chunk) { data += chunk; });
-        response.on('end', function () {
-            //json cleanup
-            data = data.replace(/\\n/g, "\\n")  
-               .replace(/\\'/g, "\\'")
-               .replace(/\\"/g, '\\"')
-               .replace(/\\&/g, "\\&")
-               .replace(/\\r/g, "\\r")
-               .replace(/\\t/g, "\\t")
-               .replace(/\\b/g, "\\b")
-               .replace(/\\f/g, "\\f");
-            // remove non-printable and other non-valid JSON chars
-            data = data.replace(/[\u0000-\u0019]+/g,""); 
+        response.on('end', function (data) {
+            // //json cleanup
+            // data = data.replace(/\\n/g, "\\n")  
+            //    .replace(/\\'/g, "\\'")
+            //    .replace(/\\"/g, '\\"')
+            //    .replace(/\\&/g, "\\&")
+            //    .replace(/\\r/g, "\\r")
+            //    .replace(/\\t/g, "\\t")
+            //    .replace(/\\b/g, "\\b")
+            //    .replace(/\\f/g, "\\f");
+            // // remove non-printable and other non-valid JSON chars
+            // data = data.replace(/[\u0000-\u0019]+/g,""); 
              
-            callback(JSON.parse(data));
+            callback(JSON.stringify(data));
         });
     });
     request.end();
