@@ -1,5 +1,5 @@
 {
-  "name": "abusereportbot",
+  "name": "starwarsbot",
   "version": "1.0.0",
   "description": "AUHack project",
   "main": "hello.js",
@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "botbuilder": "^3.7.0",
+    "dotenv": "^4.0.0",
+    "http": "0.0.0",
+    "https": "^1.0.0",
     "restify": "^4.3.0"
   }
 }
