@@ -13,8 +13,7 @@ const dialog = new builder.IntentDialog({ recognizers: [recognizer] });
 //var SWAPI_URL = "http://swapi.co/api/"
 
 const options = [
-    'Get episode title',
-    'Get the story of the episode'
+    'Films', 'people', 'planets', 'species', 'starships and so forth...'
 ];
 
 module.exports = dialog
@@ -52,7 +51,7 @@ function confirmTitle(session, args, next) {
     if (films) {
         next({ response: films.entity });
     } else {
-        builder.Prompts.text(session, 'Ok, it seems you\'re looking for the title of an episode? Which episode\'s title are you looking for?');
+        builder.Prompts.text(session, 'Which episode\'s title you need?');
     }
 }
 
@@ -68,8 +67,8 @@ function getTitle(session, results, next) {
         session.endDialog('Request cancelled.');
     } else {
         loadTitle(films, (title) => {
-            if (title) {
-                var message = new builder.Message(session).text('The title of the movie is ' + title.title);
+            if (title !== 'Not Found') {
+                var message = new builder.Message(session).text('The title of the movie is ' + title);
                 session.send(message);
             } else {
                 session.endDialog('Sorrrrrrrrrrrrrrrrrry');
@@ -100,37 +99,13 @@ function loadData(path, callback) {
         var data = '';
         response.on('data', function (chunk) { data += chunk; });
         response.on('end', function (data) {
-            // //json cleanup
-            // data = data.replace(/\\n/g, "\\n")  
-            //    .replace(/\\'/g, "\\'")
-            //    .replace(/\\"/g, '\\"')
-            //    .replace(/\\&/g, "\\&")
-            //    .replace(/\\r/g, "\\r")
-            //    .replace(/\\t/g, "\\t")
-            //    .replace(/\\b/g, "\\b")
-            //    .replace(/\\f/g, "\\f");
-            // // remove non-printable and other non-valid JSON chars
-            // data = data.replace(/[\u0000-\u0019]+/g,""); 
              
-            callback(JSON.stringify(data));
+            callback(data);
         });
     });
     request.end();
-}
-       
-   
+}  
     
-    
-//JSON object refining
-
-// var parseTitleResponse = function (mySession, myResponse) {
-//     var data = '';
-//     response.on('data')
-//     var obj = JSON.parse(myResponse);
-//     var formattedString = ('The title of the movie is ' + obj.title);
-//     mySession.endDialog();
-// }
-
 //creating cards for fancy responses
 /*
 function getFilmThumbnail(session, profile) {
