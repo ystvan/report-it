@@ -14,34 +14,35 @@ const dialog = new builder.IntentDialog({ recognizers: [recognizer] });
 
 const options = [
     'Get episode title',
-    'Get episode plot',
-    'Get episode release date',
-    'Get full cast of episode', 
-    'Get planet origin of a character',
-    'Get Starships'
+    'Get the story of the episode'
 ];
 
 module.exports = dialog
     .matches('getting the episode title', [
         confirmTitle, getTitle
     ])
-    .matches('getting the episode plot', [
-        confirmPlot, getPlot
-    ])
-    .matches('getting the episode release_date', [
+    // .matches('getting the episode plot', [
+    //     confirmPlot, getPlot
+    // ])
+    // .matches('getting the episode release_date', [
 
-    ])
-     .matches('getting the cast', [
+    // ])
+    //  .matches('getting the cast', [
         
-    ])
-     .matches('getting the origin of character', [
+    // ])
+    //  .matches('getting the origin of character', [
         
-    ])
-     .matches('getting the starships', [
+    // ])
+    //  .matches('getting the starships', [
         
-    ])
+    // ])
     .onDefault([sendInstructions]);
 
+//default Prompt in case of non applicable query
+function sendInstructions(session, results, next) {
+    builder.Prompts.choice(session, 'What information are you looking for?', options);
+    next();
+}
 
 // After luis recognized that user probably looking for the episode's name, confirm:
 function confirmTitle(session, args, next) {
@@ -63,12 +64,13 @@ function getTitle(session, results, next) {
     if (films.entity) films = session.dialogData.films = films.entity;
     else session.dialogData.user = films;
 
-    if (!films) {
+    if (!films) 
         session.endDialog('Request cancelled.');
-    } else {
-        loadTitle(//to be implement a card with the movie/episode part
-    }
-}
+    else 
+        loadTitle();
+       
+};
+
 
 
 //Helper methods from the API requests
@@ -80,7 +82,6 @@ function loadTitle(films, callback){
 function loadTitle(path, callback) {
     var options = {
         host: 'http://swapi.co/api',
-        port: 443,
         path: path,
         method: 'GET'
     };
@@ -98,7 +99,7 @@ function loadTitle(path, callback) {
    
     
     
-
+//JSON object refining
 
 var parseTitleResponse = function (mySession, myResponse) {
     var obj = JSON.parse(myResponse);
@@ -106,6 +107,22 @@ var parseTitleResponse = function (mySession, myResponse) {
     mySession.endDialog();
 }
 
+//creating cards for fancy responses
+/*
+function getFilmThumbnail(session, profile) {
+    var thumbnail = new builder.ThumbnailCard(session);
+    thumbnail.title(films.title);
+    thumbnail.images([builder.CardImage.create(session, '/src/images/swlogo.png')]);
 
+    if(films.title) thumbnail.subtitle(films.title);
+
+    var text = '';
+    if (films.title) text += films.title + ' \n';
+    
+    thumbnail.text(text);
+   
+    return thumbnail;
+}
+*/
 
 
