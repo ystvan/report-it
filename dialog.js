@@ -20,10 +20,10 @@ module.exports = dialog
         confirmTitle,
         getTitle
     ])
-    .matches('getting the episode plot', [
-        confirmPlot, 
-        getPlot
-    ])
+    // .matches('getting the episode plot', [
+    //     confirmPlot, 
+    //     getPlot
+    // ])
     .matches('getting the episode release_date', [
         confirmRelease, 
         getRelease
@@ -51,6 +51,8 @@ module.exports = dialog
 
 function sendInstructions(session, results, next) {
     builder.Prompts.choice(session, 'Better ask me about STAR WARS movies!', options);
+    var message = new builder.Message(session).attachments([getSWThumbnail(session, results)]);
+    session.send(message);
     next();
 }
 
@@ -80,7 +82,9 @@ function confirmPlot(session, args, next) {
     if (films) {
         next({ response: films.entity });
     } else {
-        builder.Prompts.text(session, 'Need some spoilers? Which episode are you interested in?');
+        //builder.Prompts.text(session, 'Need some spoilers? Which episode are you interested in?');
+        var message = new builder.Message(session).attachments([getSWThumbnail(session, results)]);
+        session.send(message);
     }
 }
 
@@ -273,15 +277,15 @@ function loadRelease(films, callback){
 }
 
 function loadCast(people, callback){
-    loadData('/api/people/' + querystring.escape(films), callback);
+    loadData('/api/people/' + querystring.escape(people), callback);
 }
 
 function loadOrigin(species, callback){
-    loadData('/api/species/' + querystring.escape(films), callback);
+    loadData('/api/species/' + querystring.escape(species), callback);
 }
 
 function loadShip(starships, callback){
-    loadData('/api/starships/' + querystring.escape(films), callback);
+    loadData('/api/starships/' + querystring.escape(starships), callback);
 }
 
 //=============================================================
@@ -310,10 +314,11 @@ function loadData(path, callback) {
 }  
 
 // Helpers
-function episodeAsAttachment(films) {
-    return new builder.HeroCard()
-        .title(films.title)
-        .images([new builder.CardImage().url('/src/images/swlogo.png')])
+function getSWThumbnail(session, films) {
+    var thumbnail = new builder.ThumbnailCard(session);
+    thumbnail.title("It really nice is not, hmm?  Yeesssssss.")
+    thumbnail.images([builder.CardImage.create(session, 'http://www.yodaspeak.co.uk/yoda.png')])
+    return thumbnail;
         
 }
 
