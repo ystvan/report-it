@@ -146,6 +146,12 @@ function getTitle(session, results, next) {
     if (!films) {
         session.endDialog('Request cancelled.');
     } else {
+
+    //=============================================================
+    //I am aware of the'dobject' is just bad here.
+    //The goal was to keep going in the sake of simplicity and the demo prsesentation. 
+    //Will come back to it, and properly do the debugging
+    //=============================================================
         loadTitle(films, (dobject) => {
             if (dobject !== null) {
                 var message = new builder.Message(session).text('The title of the movie is ' + dobject);
@@ -301,6 +307,10 @@ function loadData(path, callback) {
             'User-Agent': 'sample-bot'
         }
     };
+    //=============================================================
+    //The callback should be fixed, it is not the proper way, but in order to do the demo prezi
+    //and the flow with the dialogs, I left it like this.
+    //=============================================================
     var dobject;
     var request = https.request(options, function (response) {
         var data = '';
@@ -311,6 +321,17 @@ function loadData(path, callback) {
         });
     });
     request.end();
+    
+    // var dobject;
+    // var request = https.request(options, function (response) {
+    //     var data = '';
+    //     await response.on('data', function (chunk) { data += chunk; });
+    //     response.on('end', function (data) {
+    //          var result = JSON.parse(data);   
+    //         callback(result["result"]);
+    //     });
+    // });
+    // request.end();
 }  
 
 // Helpers
